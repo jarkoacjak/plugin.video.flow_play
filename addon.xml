@@ -1,19 +1,13 @@
-<?xml verzia="1.0" kódovanie="UTF-8" samostatné="áno"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.flow_play" name="Flow play" version="1.0.0" provider-name="Jarko">
-    <vyžaduje>
-        <import addon="xbmc.python" verzia="3.0.0"/>
-    </vyžaduje>
-    <extension point="xbmc.python.pluginsource" knižnica="main.py">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="announcements.py">
         <provides>video</provides>
-    </rozšírenie>
+    </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="sk">Streamovací doplnok Flow play</summary>
-        <description lang="sk">Sledujte relácie, filmy a logistiku. Verzia bez prihlásenia.</description>
-        <platform>všetky</platform>
-        <aktíva>
-            <icon>icon.png</icon>
-        </assets>
-    </rozšírenie>
-</doplnok>
-
-
+        <summary lang="sk">Streamovanie Flow obsahu</summary>
+        <platform>all</platform>
+    </extension>
+</addon>
