@@ -4,7 +4,6 @@ import urllib.parse
 import xbmcgui
 import xbmcplugin
 
-# Pomocná funkcia na vytvorenie URL adries v menu
 def build_url(query):
     return sys.argv[0] + '?' + urllib.parse.urlencode(query)
 
@@ -19,40 +18,38 @@ def main():
     if not mode:
         categories = [
             {"label": "Relácie", "mode": "relacie"},
-            {"label": "Logistika", "mode": "logistika"},
             {"label": "Filmy", "mode": "filmy"},
             {"label": "Deti", "mode": "deti"}
         ]
 
         for kat in categories:
-            # Vytvoríme položku v menu
             li = xbmcgui.ListItem(label="[B]" + kat["label"] + "[/B]")
             url = build_url({'mode': kat['mode']})
-            # True znamená, že ide o priečinok (otvorí ďalšie menu)
             xbmcplugin.addDirectoryItem(handle, url, li, True)
         
         xbmcplugin.endOfDirectory(handle)
 
-    # --- SEKCIA LOGISTIKA (Upútavka) ---
-    elif mode == 'logistika':
-        # Tvoje YouTube video pre Logistiku
+    # --- SEKCIA RELÁCIE (Logistika s automatickou upútavkou) ---
+    elif mode == 'relacie':
         video_id = "_oFCqhIa9Ls"
         url = "plugin://plugin.video.youtube/play/?video_id=" + video_id
         
-        li = xbmcgui.ListItem(label="Logistika - Upútavka")
-        li.setInfo('video', {'title': 'Logistika Upútavka', 'plot': 'Pripravujeme čoskoro...'})
-        li.setProperty('IsPlayable', 'true') # Povie Kodi, že je to video
+        li = xbmcgui.ListItem(label="Logistika")
+        li.setInfo('video', {
+            'title': 'Logistika', 
+            'plot': 'Pripravujeme čoskoro... Po kliknutí sa spustí upútavka.'
+        })
+        li.setProperty('IsPlayable', 'true')
         
         xbmcplugin.addDirectoryItem(handle, url, li, False)
         xbmcplugin.endOfDirectory(handle)
 
     # --- SEKCIA DETI (Bambuľka) ---
     elif mode == 'deti':
-        # Zoznam epizód Bambuľky, ktoré si poslal
+        # 1. a 2. epizóda sú normálne videá
         episody = [
-            {"label": "Bambuľka 1", "id": "UOCo8fLEoUo"},
-            {"label": "Bambuľka 2", "id": "674vZJ_t4WA"},
-            {"label": "Bambuľka 3 (Ešte sme nevysielali)", "id": "imTt7UiToYY"}
+            {"label": "Bambuľka 1", "id": "UOCo8fLEoUo", "info": ""},
+            {"label": "Bambuľka 2", "id": "674vZJ_t4WA", "info": ""},
         ]
 
         for ep in episody:
@@ -61,18 +58,23 @@ def main():
             li.setProperty('IsPlayable', 'true')
             xbmcplugin.addDirectoryItem(handle, url, li, False)
             
+        # 3. epizóda - len textové oznámenie
+        li3 = xbmcgui.ListItem(label="Bambuľka 3")
+        li3.setInfo('video', {
+            'title': 'Bambuľka 3',
+            'plot': 'Ešte sme nevysielali alebo nebola pridaná.'
+        })
+        # Pri tejto položke nedávame URL, aby sa nič nespustilo, len ukázal text
+        xbmcplugin.addDirectoryItem(handle, "", li3, False)
+            
         xbmcplugin.endOfDirectory(handle)
 
-    # --- SEKCIE FILMY A RELÁCIE (Pripravujeme) ---
-    else:
-        oznam = "Už čoskoro pripravujeme..."
-        label_text = "Relácie" if mode == 'relacie' else "Filmy"
-        
-        li = xbmcgui.ListItem(label="[I]" + label_text + " - " + oznam + "[/I]")
-        # Prázdna URL, pretože tam ešte nič nie je
+    # --- SEKCIA FILMY ---
+    elif mode == 'filmy':
+        li = xbmcgui.ListItem(label="[I]Filmy - Už čoskoro...[/I]")
         xbmcplugin.addDirectoryItem(handle, "", li, False)
         xbmcplugin.endOfDirectory(handle)
 
 if __name__ == '__main__':
     main()
-       
+    
