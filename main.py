@@ -1,25 +1,78 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.flowplay" 
-       name="Flow Play" 
-       version="1.0.1" 
-       provider-name="Jarko">
-    <requires>
-        <import addon="xbmc.python" version="3.0.0"/>
-        <import addon="plugin.video.youtube" version="6.8.0"/>
-        <import addon="script.module.requests" version="2.25.1"/>
-        <import addon="script.module.urlresolver" version="5.0.0" optional="true"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource" library="main.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <summary lang="sk">Streamovací portál Flow Play</summary>
-        <description lang="sk">Prístup k reláciám, logistike a detskému obsahu v rámci Flow Play systému.</description>
-        <platform>all</platform>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.jpg</fanart>
-        </assets>
-        <news>v1.0.1 - Pridaná sekcia Deti a oprava logistiky.</news>
-    </extension>
-</addon>
+# -*- coding: utf-8 -*-
+import sys
+import urllib.parse
+import xbmcgui
+import xbmcplugin
+
+# Pomocná funkcia na vytvorenie URL adries v menu
+def build_url(query):
+    return sys.argv[0] + '?' + urllib.parse.urlencode(query)
+
+def main():
+    handle = int(sys.argv[1])
+    arg_string = sys.argv[2][1:] if len(sys.argv[2]) > 1 else ""
+    params = dict(urllib.parse.parse_qsl(arg_string))
+
+    mode = params.get('mode')
+
+    # --- HLAVNÉ MENU ---
+    if not mode:
+        categories = [
+            {"label": "Relácie", "mode": "relacie"},
+            {"label": "Logistika", "mode": "logistika"},
+            {"label": "Filmy", "mode": "filmy"},
+            {"label": "Deti", "mode": "deti"}
+        ]
+
+        for kat in categories:
+            # Vytvoríme položku v menu
+            li = xbmcgui.ListItem(label="[B]" + kat["label"] + "[/B]")
+            url = build_url({'mode': kat['mode']})
+            # True znamená, že ide o priečinok (otvorí ďalšie menu)
+            xbmcplugin.addDirectoryItem(handle, url, li, True)
+        
+        xbmcplugin.endOfDirectory(handle)
+
+    # --- SEKCIA LOGISTIKA (Upútavka) ---
+    elif mode == 'logistika':
+        # Tvoje YouTube video pre Logistiku
+        video_id = "_oFCqhIa9Ls"
+        url = "plugin://plugin.video.youtube/play/?video_id=" + video_id
+        
+        li = xbmcgui.ListItem(label="Logistika - Upútavka")
+        li.setInfo('video', {'title': 'Logistika Upútavka', 'plot': 'Pripravujeme čoskoro...'})
+        li.setProperty('IsPlayable', 'true') # Povie Kodi, že je to video
+        
+        xbmcplugin.addDirectoryItem(handle, url, li, False)
+        xbmcplugin.endOfDirectory(handle)
+
+    # --- SEKCIA DETI (Bambuľka) ---
+    elif mode == 'deti':
+        # Zoznam epizód Bambuľky, ktoré si poslal
+        episody = [
+            {"label": "Bambuľka 1", "id": "UOCo8fLEoUo"},
+            {"label": "Bambuľka 2", "id": "674vZJ_t4WA"},
+            {"label": "Bambuľka 3 (Ešte sme nevysielali)", "id": "imTt7UiToYY"}
+        ]
+
+        for ep in episody:
+            li = xbmcgui.ListItem(label=ep["label"])
+            url = "plugin://plugin.video.youtube/play/?video_id=" + ep["id"]
+            li.setProperty('IsPlayable', 'true')
+            xbmcplugin.addDirectoryItem(handle, url, li, False)
+            
+        xbmcplugin.endOfDirectory(handle)
+
+    # --- SEKCIE FILMY A RELÁCIE (Pripravujeme) ---
+    else:
+        oznam = "Už čoskoro pripravujeme..."
+        label_text = "Relácie" if mode == 'relacie' else "Filmy"
+        
+        li = xbmcgui.ListItem(label="[I]" + label_text + " - " + oznam + "[/I]")
+        # Prázdna URL, pretože tam ešte nič nie je
+        xbmcplugin.addDirectoryItem(handle, "", li, False)
+        xbmcplugin.endOfDirectory(handle)
+
+if __name__ == '__main__':
+    main()
+       
