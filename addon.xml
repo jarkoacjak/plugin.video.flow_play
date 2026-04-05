@@ -6,17 +6,15 @@
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="plugin.video.youtube" version="6.8.0"/>
-        <import addon="script.module.requests" version="2.25.1"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="sk">Streamovací portál Flow Play</summary>
-        <description lang="sk">Oficiálny doplnok Flow Play pre sledovanie relácií, filmov a obsahu pre deti.</description>
-        <disclaimer lang="sk">Obsah je poskytovaný prostredníctvom verejne dostupných zdrojov.</disclaimer>
-        <language>sk</language>
+        <description lang="sk">Doplnok pre sledovanie relácií, logistiky a detského obsahu (Bambuľka).</description>
         <platform>all</platform>
+        <language>sk</language>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>
