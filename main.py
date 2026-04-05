@@ -1,72 +1,25 @@
-import sys
-import urllib.parse
-import xbmcgui
-import xbmcplugin
-
-# Pomocná funkcia na navigáciu v menu
-def build_url(query):
-    return sys.argv[0] + '?' + urllib.parse.urlencode(query)
-
-def main():
-    handle = int(sys.argv[1])
-    arg_string = sys.argv[2][1:] if len(sys.argv[2]) > 1 else ""
-    params = dict(urllib.parse.parse_qsl(arg_string))
-
-    mode = params.get('mode')
-
-    # HLAVNÉ MENU
-    if not mode:
-        categories = [
-            {"label": "Relácie", "mode": "relacie"},
-            {"label": "Logistika", "mode": "logistika"},
-            {"label": "Filmy", "mode": "filmy"},
-            {"label": "Deti", "mode": "deti"}
-        ]
-
-        for kat in categories:
-            li = xbmcgui.ListItem(label="[B]" + kat["label"] + "[/B]")
-            url = build_url({'mode': kat['mode']})
-            xbmcplugin.addDirectoryItem(handle, url, li, True)
-        
-        xbmcplugin.endOfDirectory(handle)
-
-    # SEKCIA LOGISTIKA - Spustí upútavku
-    elif mode == 'logistika':
-        video_url = "https://www.youtube.com/watch?v=_oFCqhIa9Ls"
-        # plugin://plugin.video.youtube/ kód pre priame spustenie cez YT doplnok
-        final_url = "plugin://plugin.video.youtube/play/?video_id=_oFCqhIa9Ls"
-        
-        li = xbmcgui.ListItem(label="Logistika - Upútavka")
-        li.setInfo('video', {'title': 'Logistika Upútavka', 'plot': 'Pripravujeme čoskoro...'})
-        li.setProperty('IsPlayable', 'true')
-        
-        xbmcplugin.addDirectoryItem(handle, final_url, li, False)
-        xbmcplugin.endOfDirectory(handle)
-
-    # SEKCIA DETI - Zoznam epizód
-    elif mode == 'deti':
-        episody = [
-            {"label": "Bambuľka 1", "id": "UOCo8fLEoUo"},
-            {"label": "Bambuľka 2", "id": "674vZJ_t4WA"},
-            {"label": "Bambuľka 3 (Ešte sme nevysielali)", "id": "imTt7UiToYY"}
-        ]
-
-        for ep in episody:
-            li = xbmcgui.ListItem(label=ep["label"])
-            # Ak je to 3. epizóda, môžeme len vypísať info alebo ju nechať prehrať
-            url = "plugin://plugin.video.youtube/play/?video_id=" + ep["id"]
-            li.setProperty('IsPlayable', 'true')
-            xbmcplugin.addDirectoryItem(handle, url, li, False)
-            
-        xbmcplugin.endOfDirectory(handle)
-
-    # OSTATNÉ SEKCIE (Relácie, Filmy)
-    else:
-        oznam = "Už čoskoro pripravujeme..."
-        li = xbmcgui.ListItem(label="[I]" + mode.capitalize() + " - " + oznam + "[/I]")
-        xbmcplugin.addDirectoryItem(handle, "", li, False)
-        xbmcplugin.endOfDirectory(handle)
-
-if __name__ == '__main__':
-    main()
-    
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.flowplay" 
+       name="Flow Play" 
+       version="1.0.1" 
+       provider-name="Jarko">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="plugin.video.youtube" version="6.8.0"/>
+        <import addon="script.module.requests" version="2.25.1"/>
+        <import addon="script.module.urlresolver" version="5.0.0" optional="true"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="main.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="sk">Streamovací portál Flow Play</summary>
+        <description lang="sk">Prístup k reláciám, logistike a detskému obsahu v rámci Flow Play systému.</description>
+        <platform>all</platform>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+        </assets>
+        <news>v1.0.1 - Pridaná sekcia Deti a oprava logistiky.</news>
+    </extension>
+</addon>
