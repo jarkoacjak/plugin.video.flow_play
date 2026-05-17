@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.flow_play" 
+<addon id="plugin.video.flowplay" 
        name="Flow Play" 
        version="1.0.0" 
        provider-name="Jarko">
